@@ -36,7 +36,7 @@ jobs:
           command: ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
       - run:
           name: Package application
-          command: tar --exclude=node_modules --exclude=.git -czf app.tar.gz .
+          command: tar --exclude=node_modules --exclude=.git --exclude=app.tar.gz -czf app.tar.gz .
       - run:
           name: Copy package to EC2
           command: scp app.tar.gz "$EC2_USER@$EC2_HOST:/home/$EC2_USER/app.tar.gz"
