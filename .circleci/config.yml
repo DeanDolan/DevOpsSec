@@ -43,18 +43,18 @@ jobs:
       - run:
           name: Deploy on EC2
           command: |
-            ssh "$EC2_USER@$EC2_HOST" <<'EOF'
-            set -e
-            sudo mkdir -p /var/www/simpleapplication
-            sudo chown -R $USER:$USER /var/www/simpleapplication
-            find /var/www/simpleapplication -mindepth 1 -maxdepth 1 -exec rm -rf {} +
-            tar -xzf /home/$USER/app.tar.gz -C /var/www/simpleapplication
-            cd /var/www/simpleapplication
-            npm ci --omit=dev
-            sudo systemctl restart simpleapplication
-            sleep 3
-            curl -I http://127.0.0.1:8080/health
-            EOF
+            ssh "$EC2_USER@$EC2_HOST" '
+              set -e
+              sudo mkdir -p /var/www/simpleapplication
+              sudo chown -R ubuntu:ubuntu /var/www/simpleapplication
+              find /var/www/simpleapplication -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+              tar -xzf /home/ubuntu/app.tar.gz -C /var/www/simpleapplication
+              cd /var/www/simpleapplication
+              npm ci --omit=dev
+              sudo systemctl restart simpleapplication
+              sleep 3
+              curl -I http://127.0.0.1:8080/health
+            '
 
 workflows:
   build_test_deploy:
