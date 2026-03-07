@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.0540" tests="2" failures="0">
+  <testsuite name="Root Suite" timestamp="2026-03-07T17:03:36" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="Simple Application smoke tests" timestamp="2026-03-07T17:03:36" tests="2" file="C:\Users\deand\OneDrive\Desktop\SimpleApplication\test\app.test.js" time="0.0540" failures="0">
+    <testcase name="Simple Application smoke tests returns 200 on /" time="0.0500" classname="returns 200 on /">
+    </testcase>
+    <testcase name="Simple Application smoke tests returns 200 on /health" time="0.0040" classname="returns 200 on /health">
+    </testcase>
+  </testsuite>
+</testsuites>
