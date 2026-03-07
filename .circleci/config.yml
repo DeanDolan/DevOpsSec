@@ -22,7 +22,47 @@ jobs:
           name: Run tests
           command: npm test
 
+  deploy:
+    docker:
+      - image: cimg/base:stable
+    working_directory: ~/project
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:us/KwwKKpi4He6fgmabBATfG+yiI0bax9NFdhxhzCsE"
+      - run:
+          name: Add EC2 host to known_hosts
+          command: ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
+      - run:
+          name: Package application
+          command: tar --exclude=node_modules --exclude=.git -czf app.tar.gz .
+      - run:
+          name: Copy package to EC2
+          command: scp app.tar.gz "$EC2_USER@$EC2_HOST:/home/$EC2_USER/app.tar.gz"
+      - run:
+          name: Deploy on EC2
+          command: |
+            ssh "$EC2_USER@$EC2_HOST" <<'EOF'
+            set -e
+            sudo mkdir -p /var/www/simpleapplication
+            sudo chown -R $USER:$USER /var/www/simpleapplication
+            find /var/www/simpleapplication -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+            tar -xzf /home/$USER/app.tar.gz -C /var/www/simpleapplication
+            cd /var/www/simpleapplication
+            npm ci --omit=dev
+            sudo systemctl restart simpleapplication
+            sleep 3
+            curl -I http://127.0.0.1:8080/health
+            EOF
+
 workflows:
-  build_and_test:
+  build_test_deploy:
     jobs:
       - test
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
